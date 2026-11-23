@@ -1,0 +1,15 @@
+{
+  "name": "presentation",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "mkdir -p ~/.local/share/fonts && cp typst/fonts/*.ttf ~/.local/share/fonts/ && fc-cache -f",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "myriad-dreamin.tinymist",
+        "mathematic.vscode-pdf"
+      ]
+    }
+  }
+}

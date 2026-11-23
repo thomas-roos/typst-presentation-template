@@ -1,0 +1,42 @@
+name: Build Typst deck
+
+on:
+  push:
+    paths: ["typst/**", ".devcontainer/**", ".github/workflows/typst.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Same container as Codespaces / VS Code; the image is cached in GHCR.
+      - uses: devcontainers/ci@v0.3
+        with:
+          imageName: ghcr.io/${{ github.repository }}-devcontainer
+          cacheFrom: ghcr.io/${{ github.repository }}-devcontainer
+          push: filter
+          refFilterForPush: refs/heads/main
+          runCmd: typst/build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: typst-deck
+          path: |
+            typst/deck.pdf
+            typst/deck.pdfpc
+            typst/deck.html
+            typst/deck.odp
+            typst/deck-images.odp
+
